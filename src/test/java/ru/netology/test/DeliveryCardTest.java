@@ -2,7 +2,7 @@ package ru.netology.test;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
-import org.jetbrains.annotations.NotNull;
+
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
