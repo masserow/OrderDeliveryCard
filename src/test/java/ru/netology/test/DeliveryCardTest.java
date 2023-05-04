@@ -6,11 +6,9 @@ import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static com.codeborne.selenide.Condition.appear;
 import static com.codeborne.selenide.Selenide.*;
 
 public class DeliveryCardTest {
@@ -44,6 +42,7 @@ public class DeliveryCardTest {
     public void testCityFieldEmpty() {
         String meetingDate = setCurrentDate (3);
 
+        Configuration.holdBrowserOpen = true;
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue("");
         SelenideElement dateInput = $("span[data-test-id='date'] input");
@@ -54,8 +53,7 @@ public class DeliveryCardTest {
         $("[data-test-id='agreement']").click();
         $x("//span[@class='button__text']/../../../button").click();
 
-        $x("//span[@data-test-id='city']//span[contains(text(), 'Поле обязательно для заполнения')]").shouldBe(
-                appear, Duration.ofSeconds(10));
+        $x("//span[@data-test-id='city']//span[contains(text(), 'Поле обязательно для заполнения')]");
 
     }
 }
