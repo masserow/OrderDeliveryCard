@@ -15,7 +15,7 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class DeliveryCardTest {
 
-    private @NotNull String setCurrentDate(int days) {
+    private String setCurrentDate(int days) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
         LocalDate newDate = LocalDate.now().plusDays(days);
         return newDate.format(formatter);
