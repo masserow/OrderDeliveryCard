@@ -1,14 +1,18 @@
 package ru.netology.test;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
 
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 
 public class DeliveryCardTest {
@@ -21,18 +25,29 @@ public class DeliveryCardTest {
 
     @Test
     void shoudReservationDeliveryCard() {
-        String meetingDate = setCurrentDate(4);
+        String meetingDate = setCurrentDate(9);
 
         Configuration.holdBrowserOpen = true;
+        Configuration.timeout = (15000);
         open("http://localhost:9999");
         $("[data-test-id=city] input").setValue("Рязань");
         SelenideElement dateInput = $("[data-test-id='date'] input");
         dateInput.sendKeys(Keys.LEFT_SHIFT, Keys.HOME,Keys.BACK_SPACE);
         dateInput.setValue(meetingDate);
-        $("[name=name]").setValue("Гусев Иван");
-        $("[name=phone]").setValue("+79164535391");
-        $("[data-test-id=agreement]").click();
-        $x("//span[@class='button__text']/../../../button").click();
+        $("[name='name']").setValue("Гусев Иван");
+        $("[name='phone']").setValue("+79164535391");
+        $("[data-test-id='agreement']").click();
+        $x("//span[@class='button__content']/ancestor-or-self::button[@type='button']").click();
+
+        $x("//*[contains(text(), 'Встреча успешно забронирована на ')]").shouldHave(visible);
+
+        //$x("span[@data-test-id='date']//input[@type='date']").shouldHave(Condition.value(meetingDate));
+
+        //$x("span[@data-test-id='date']//input[@class='input__control']").shouldHave(Condition.value(meetingDate));
+
+        //$x("//div[@data-test-id='notification']//div[@class='notification__content']").shouldHave(Condition.value(meetingDate));
+
+
     }
 
 
@@ -40,7 +55,7 @@ public class DeliveryCardTest {
 
     @Test
     public void testCityFieldEmpty() {
-        String meetingDate = setCurrentDate (3);
+        String meetingDate = setCurrentDate (1);
 
         Configuration.holdBrowserOpen = true;
         open("http://localhost:9999");
@@ -48,12 +63,35 @@ public class DeliveryCardTest {
         SelenideElement dateInput = $("span[data-test-id='date'] input");
         dateInput.sendKeys(Keys.LEFT_SHIFT, Keys.HOME, Keys.BACK_SPACE);
         dateInput.setValue(meetingDate);
-        $("[data-test-id='name'] input").setValue("Петров-Водкин Вова");
+        $("[data-test-id='name'] input").setValue("Петров-Водкин Ян");
         $("[data-test-id='phone'] input").setValue("+9995348756");
         $("[data-test-id='agreement']").click();
-        $x("//span[@class='button__text']/../../../button").click();
+        $x("//span[@class='button__content']/ancestor-or-self::button[@type='button']").click();
 
-        $x("//span[@data-test-id='city']//span[contains(text(), 'Поле обязательно для заполнения')]");
-
+        $x("//span[@data-test-id='city']//span[@class='input__sub']")
+                .shouldHave(exactText("Поле обязательно для заполнения"), visible);
     }
+
+    @Test
+    public void tesFieldNameLatinFont() {
+        String meetingDate = setCurrentDate (3);
+
+        Configuration.holdBrowserOpen = true;
+        open("http://localhost:9999");
+        $("[data-test-id='city'] input").setValue("Москва");
+        SelenideElement dateInput = $("span[data-test-id='date'] input");
+        dateInput.sendKeys(Keys.LEFT_SHIFT, Keys.HOME, Keys.BACK_SPACE);
+        dateInput.setValue(meetingDate);
+        $("[data-test-id='name'] input").setValue("Gusev Ivan");
+        $("[data-test-id='phone'] input").setValue("+9995348756");
+        $("[data-test-id='agreement']").click();
+        $x("//span[@class='button__content']/ancestor-or-self::button[@type='button']").click();
+
+         $x("//span[@data-test-id='name']//span[@class='input__sub']")
+                .shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."), visible);
+    }
+
+
+
+
 }
