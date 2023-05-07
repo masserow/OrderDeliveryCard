@@ -18,7 +18,7 @@ import static com.codeborne.selenide.Selenide.*;
 public class DeliveryCardTest {
 
     private String setCurrentDate(int days) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDate newDate = LocalDate.now().plusDays(days);
         return newDate.format(formatter);
     }
@@ -32,30 +32,23 @@ public class DeliveryCardTest {
         open("http://localhost:9999");
         $("[data-test-id=city] input").setValue("Рязань");
         SelenideElement dateInput = $("[data-test-id='date'] input");
-        dateInput.sendKeys(Keys.LEFT_SHIFT, Keys.HOME,Keys.BACK_SPACE);
+        dateInput.sendKeys(Keys.LEFT_SHIFT, Keys.HOME, Keys.BACK_SPACE);
         dateInput.setValue(meetingDate);
         $("[name='name']").setValue("Гусев Иван");
         $("[name='phone']").setValue("+79164535391");
         $("[data-test-id='agreement']").click();
         $x("//span[@class='button__content']/ancestor-or-self::button[@type='button']").click();
 
-        $x("//*[contains(text(), 'Встреча успешно забронирована на ')]").shouldHave(visible);
-
-        //$x("span[@data-test-id='date']//input[@type='date']").shouldHave(Condition.value(meetingDate));
-
-        //$x("span[@data-test-id='date']//input[@class='input__control']").shouldHave(Condition.value(meetingDate));
-
-        //$x("//div[@data-test-id='notification']//div[@class='notification__content']").shouldHave(Condition.value(meetingDate));
+        $x("//div[@data-test-id='notification']//div[@class='notification__content']")
+                .shouldHave(visible, text("Встреча успешно забронирована на " + meetingDate));
 
 
     }
 
 
-
-
     @Test
     public void testCityFieldEmpty() {
-        String meetingDate = setCurrentDate (1);
+        String meetingDate = setCurrentDate(1);
 
         Configuration.holdBrowserOpen = true;
         open("http://localhost:9999");
@@ -74,7 +67,7 @@ public class DeliveryCardTest {
 
     @Test
     public void tesFieldNameLatinFont() {
-        String meetingDate = setCurrentDate (3);
+        String meetingDate = setCurrentDate(3);
 
         Configuration.holdBrowserOpen = true;
         open("http://localhost:9999");
@@ -87,11 +80,9 @@ public class DeliveryCardTest {
         $("[data-test-id='agreement']").click();
         $x("//span[@class='button__content']/ancestor-or-self::button[@type='button']").click();
 
-         $x("//span[@data-test-id='name']//span[@class='input__sub']")
+        $x("//span[@data-test-id='name']//span[@class='input__sub']")
                 .shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."), visible);
     }
-
-
 
 
 }
